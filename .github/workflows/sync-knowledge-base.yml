@@ -1,0 +1,88 @@
+name: Knowledge Base Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - PRE-PROD
+          - PROD
+        default: PRE-PROD
+      operation:
+        description: "Operation to perform"
+        required: true
+        type: choice
+        options:
+          - sync
+          - cleanup
+        default: sync
+      sync_all:
+        description: "Process all documents from Google Drive"
+        required: true
+        type: boolean
+        default: true
+      files:
+        description: "Comma-separated document names (ignored when 'Process all' is true)"
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  run-pipeline:
+    name: Run Knowledge Base Pipeline
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_env }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download NLTK data
+        run: python -m nltk.downloader punkt_tab
+
+      - name: Write Google credentials file
+        run: |
+          cat > credentials.json << 'EOF'
+          ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+          EOF
+
+      - name: Run pipeline
+        env:
+          CREDENTIALS_JSON_FILE: credentials.json
+          GOOGLE_DRIVE_FOLDER_ID: ${{ vars.GOOGLE_DRIVE_FOLDER_ID }}
+          INSTANCE_CONNECTION_NAME: ${{ vars.INSTANCE_CONNECTION_NAME }}
+          MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
+          MYSQL_USER: ${{ vars.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          DOCUMENT_TABLE: ${{ vars.DOCUMENT_TABLE }}
+          CHUNK_TABLE: ${{ vars.CHUNK_TABLE }}
+          PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+          PINECONE_INDEX_NAME: ${{ vars.PINECONE_INDEX_NAME }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          EMBEDDING_MODEL: ${{ vars.EMBEDDING_MODEL }}
+        run: |
+          ARGS="--operation ${{ inputs.operation }}"
+
+          if [ "${{ inputs.sync_all }}" = "true" ]; then
+            ARGS="$ARGS --all"
+          fi
+
+          if [ -n "${{ inputs.files }}" ] && [ "${{ inputs.sync_all }}" = "false" ]; then
+            ARGS="$ARGS --files '${{ inputs.files }}'"
+          fi
+
+          echo "Running: python app.py $ARGS"
+          eval python app.py $ARGS
