@@ -80,6 +80,38 @@ class App:
                 # Don't raise - we want cleanup to complete even if file cleanup fails
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Knowledge Base Pipeline")
+    parser.add_argument(
+        "--operation",
+        choices=["sync", "cleanup"],
+        default="sync",
+        help="Operation to perform (default: sync)",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        default=False,
+        help="Sync/cleanup all documents from Google Drive",
+    )
+    parser.add_argument(
+        "--files",
+        type=str,
+        default="",
+        help="Comma-separated list of document names to process",
+    )
+    args = parser.parse_args()
+
     load_dotenv()
     app = App()
-    app.run()
+
+    if args.files:
+        app.requested_files = [f.strip() for f in args.files.split(",") if f.strip()]
+
+    if args.operation == "sync":
+        app.sync(all=args.all)
+    elif args.operation == "cleanup":
+        if args.all:
+            app.requested_files = app.google_drive_service.fetch_files(all=True)
+        app.cleanup()
