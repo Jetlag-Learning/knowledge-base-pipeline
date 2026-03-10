@@ -8,10 +8,9 @@ on:
         required: true
         type: choice
         options:
-          - DEV
-          - QA
+          - PRE-PROD
           - PROD
-        default: DEV
+        default: PRE-PROD
       operation:
         description: "Operation to perform"
         required: true
@@ -62,18 +61,18 @@ jobs:
       - name: Run pipeline
         env:
           CREDENTIALS_JSON_FILE: credentials.json
-          GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
-          INSTANCE_CONNECTION_NAME: ${{ secrets.INSTANCE_CONNECTION_NAME }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          GOOGLE_DRIVE_FOLDER_ID: ${{ vars.GOOGLE_DRIVE_FOLDER_ID }}
+          INSTANCE_CONNECTION_NAME: ${{ vars.INSTANCE_CONNECTION_NAME }}
+          MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
+          MYSQL_USER: ${{ vars.MYSQL_USER }}
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          DOCUMENT_TABLE: ${{ secrets.DOCUMENT_TABLE }}
-          CHUNK_TABLE: ${{ secrets.CHUNK_TABLE }}
+          DOCUMENT_TABLE: ${{ vars.DOCUMENT_TABLE }}
+          CHUNK_TABLE: ${{ vars.CHUNK_TABLE }}
           PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
-          PINECONE_INDEX_NAME: ${{ secrets.PINECONE_INDEX_NAME }}
+          PINECONE_INDEX_NAME: ${{ vars.PINECONE_INDEX_NAME }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
-          EMBEDDING_MODEL: ${{ secrets.EMBEDDING_MODEL }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          EMBEDDING_MODEL: ${{ vars.EMBEDDING_MODEL }}
         run: |
           ARGS="--operation ${{ inputs.operation }}"
 
