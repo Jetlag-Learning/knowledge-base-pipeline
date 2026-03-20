@@ -193,6 +193,12 @@ knowledge-base-pipeline/
 └── .env                  # Environment variables (not in git)
 ```
 
+## Knowledge Base Documents
+
+The source documents for the knowledge base are available on Google Drive:
+
+[KB Documents Folder](https://drive.google.com/drive/u/1/folders/16TT0FYA8T9i5Zv--0EnKXYCcHFAFB2We)
+
 ## Important Notes
 
 - The `documents/` directory is automatically cleared after each sync/cleanup to prevent mixing documents from different Google Drive folders (prod/dev)
