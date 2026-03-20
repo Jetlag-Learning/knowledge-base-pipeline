@@ -49,6 +49,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Cache NLTK data
+        uses: actions/cache@v4
+        with:
+          path: ~/nltk_data
+          key: nltk-punkt_tab
+
       - name: Download NLTK data
         run: python -m nltk.downloader punkt_tab
 
