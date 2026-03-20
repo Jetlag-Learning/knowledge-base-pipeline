@@ -60,7 +60,7 @@ jobs:
 
       - name: Run pipeline
         env:
-          CREDENTIALS_JSON_FILE: credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS: credentials.json
           GOOGLE_DRIVE_FOLDER_ID: ${{ vars.GOOGLE_DRIVE_FOLDER_ID }}
           INSTANCE_CONNECTION_NAME: ${{ vars.INSTANCE_CONNECTION_NAME }}
           MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}

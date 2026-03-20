@@ -13,7 +13,7 @@ class GoogleDriveService:
     SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
     def __init__(self, download_dir="documents"):
-        self.credentials_json = os.getenv("CREDENTIALS_JSON_FILE")
+        self.credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
         self.folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
         self.download_dir = download_dir
         self.drive = None
