@@ -99,7 +99,11 @@ if __name__ == "__main__":
         "--files",
         type=str,
         default="",
-        help="Comma-separated list of document names to process",
+        help=(
+            "Comma-separated list of Google Drive document names to process. "
+            "Names must match the Google Drive file names exactly (including "
+            "extensions such as .docx for uploaded Word documents, when applicable)."
+        ),
     )
     args = parser.parse_args()
 
